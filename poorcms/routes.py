@@ -1,6 +1,7 @@
 from flask import render_template
 
 from poorcms import app
+from poorcms.models import StaticPage
 
 
 @app.route('/')

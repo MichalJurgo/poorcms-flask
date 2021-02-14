@@ -13,7 +13,7 @@
     <div id="customNavbar" class="navbar-menu">
         <div class="navbar-start">
             {% for page in menu_pages %}
-                <a href="/" class="navbar-item">{{ page.title }}</a>
+                <a href="{{ url_for('static_page', page_id=page.id) }}" class="navbar-item">{{ page.title }}</a>
             {% endfor %}
         </div>
     </div>

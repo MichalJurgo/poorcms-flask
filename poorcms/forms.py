@@ -8,3 +8,6 @@ class StaticPageForm(FlaskForm):
     content = TextAreaField('Content')
     in_menu = BooleanField('In menu')
     submit = SubmitField('Submit')
+    meta_title = StringField('Meta title')
+    meta_description = StringField('Meta description')
+    meta_noindex = BooleanField('Noindex')

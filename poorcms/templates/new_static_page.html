@@ -1,7 +1,7 @@
 {% extends 'layout.html' %}
 {% block content %}
     <section class="section">
-        <h1 class="title has-text-centered">New static page</h1>
+        <h1 class="title has-text-centered">{{ legend }}</h1>
         <form method="POST" action="">
             {{ form.csrf_token }}
             <div class="field">
@@ -12,8 +12,9 @@
                         {% for error in form.title.errors %}
                             <span>{{ error }}</span>
                         {% endfor %}
+                    {% else %}
+                        {{ form.title(class='input') }}
                     {% endif %}
-                    {{ form.title(class='input') }}
                 </div>
             </div>
             <div class="field">
@@ -24,15 +25,50 @@
                         {% for error in form.content.errors %}
                             <span>{{ error }}</span>
                         {% endfor %}
+                    {% else %}
+                        {{ form.content(class='textarea') }}
                     {% endif %}
-                    {{ form.content(class='textarea') }}
                 </div>
             </div>
             <div class="field">
-                <label for="In menu" class="checkbox">
-                    In menu
-                    {{ form.in_menu(class='checkbox') }}
-                </label>
+                {{ form.meta_title.label(class='label') }}
+                <div class="control">
+                    {% if form.meta_title.errors %}
+                        {{ form.meta_title(class='is-invalid input')}}
+                        {% for error in form.meta_title.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    {% else %}
+                        {{ form.meta_title(class='input') }}
+                    {% endif %}
+                </div>
+            </div>
+            <div class="field">
+                {{ form.meta_description.label(class='label') }}
+                <div class="control">
+                    {% if form.meta_description.errors %}
+                        {{ form.meta_description(class='is-invalid input')}}
+                        {% for error in form.meta_description.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    {% else %}
+                        {{ form.meta_description(class='input') }}
+                    {% endif %}
+                </div>
+            </div>
+            <div class="field is-grouped">
+                <div class="control">
+                    <label for="In menu" class="checkbox">
+                        In menu
+                        {{ form.in_menu(class='checkbox') }}
+                    </label>
+                </div>
+                <div class="control">
+                    <label for="Noindex" class="checkbox">
+                        Noindex
+                        {{ form.meta_noindex(class='checkbox') }}
+                    </label>
+                </div>
             </div>
             <div class="field is-grouped">
                 <div class="control">

@@ -10,7 +10,7 @@
             href="{{ url_for('static', filename='main.css') }}" />
     <script type="text/javascript"
             src="{{ url_for('static', filename='main.js') }}"></script>
-    <title>PoorCMS</title>
+    {% block seo_meta %}{% endblock seo_meta %}
 </head>
 <body>
     {% include 'navbar.html' %}

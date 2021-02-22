@@ -11,6 +11,7 @@
     <script type="text/javascript"
             src="{{ url_for('static', filename='main.js') }}"></script>
     {% block seo_meta %}{% endblock seo_meta %}
+    {% block additional %}{% endblock additional %}
 </head>
 <body>
     {% include 'navbar.html' %}

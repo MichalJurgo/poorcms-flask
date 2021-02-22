@@ -16,5 +16,13 @@
                 <a href="{{ url_for('static_page', page_id=page.id) }}" class="navbar-item">{{ page.title }}</a>
             {% endfor %}
         </div>
+        <div class="navbar-end">
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('logout') }}" class="navbar-item">Logout</a>
+            {% else %}
+                <a href="{{ url_for('login') }}" class="navbar-item">Login</a>
+                <a href="{{ url_for('register') }}" class="navbar-item">Register</a>
+            {% endif %}
+        </div>
     </div>
 </nav>

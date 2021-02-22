@@ -27,6 +27,7 @@ class User(db.Model, UserMixin):
     login = db.Column(db.String(20), unique=True, nullable=False)
     password = db.Column(db.String(60), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=True)
+    role = db.Column(db.String(32), default='user')
 
     def __repr__(self):
         return self.login

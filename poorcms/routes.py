@@ -4,6 +4,7 @@ from flask_login import login_user, logout_user, current_user, login_required
 from poorcms import app, db, bcrypt
 from poorcms.models import StaticPage, User
 from poorcms.forms import StaticPageForm, RegistrationForm, LoginForm
+from poorcms.decorators import admin_required
 
 
 @app.route('/')
@@ -19,11 +20,16 @@ def static_page(page_id):
 
 @app.route('/page/new', methods=['GET', 'POST'])
 @login_required
+@admin_required
 def new_static_page():
     form = StaticPageForm()
     if form.validate_on_submit():
-        page = StaticPage(title=form.title.data, content=form.content.data,
-                        in_menu=form.in_menu.data)
+        page = StaticPage(title=form.title.data,
+                        content=form.content.data,
+                        in_menu=form.in_menu.data,
+                        meta_title=form.meta_title.data,
+                        meta_description=form.meta_description.data,
+                        meta_noindex=form.meta_noindex.data)
         db.session.add(page)
         db.session.commit()
         flash('New page created.', 'success')
@@ -32,6 +38,8 @@ def new_static_page():
 
 
 @app.route('/page/<int:page_id>/edit', methods=['GET', 'POST'])
+@login_required
+@admin_required
 def edit_static_page(page_id):
     page = StaticPage.query.get_or_404(page_id)
     form = StaticPageForm()
@@ -57,6 +65,8 @@ def edit_static_page(page_id):
 
 
 @app.route('/page/<int:page_id>/delete', methods=['POST'])
+@login_required
+@admin_required
 def delete_static_page(page_id):
     page = StaticPage.query.get_or_404(page_id)
     db.session.delete(page)
@@ -101,6 +111,7 @@ def login():
 
 
 @app.route('/logout')
+@login_required
 def logout():
     logout_user()
     return redirect(url_for('index'))

@@ -117,6 +117,11 @@ def logout():
     return redirect(url_for('index'))
 
 
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
+
+
 @app.context_processor
 def inject_menu_pages():
     menu_pages = StaticPage.query.filter_by(in_menu=True).all()

@@ -23,6 +23,20 @@ class UserModelTestCase(unittest.TestCase):
     def tearDown(self):
         pass
 
+    def test_password_setter(self):
+        u = User(password='fraszka')
+        self.assertTrue(u.password_hash is not None)
+
+    def test_no_password_getter(self):
+        u = User(password='fraszka')
+        with self.assertRaises(AttributeError):
+            u.password
+
+    def test_password_salts_are_random(self):
+        u = User(password='fraszka')
+        u2 = User(password='fraszka')
+        self.assertTrue(u.password_hash != u2.password_hash)
+
 
 if __name__ == '__main__':
     unittest.main()

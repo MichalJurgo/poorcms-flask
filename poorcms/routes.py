@@ -1,7 +1,7 @@
 from flask import render_template, url_for, flash, redirect, request
 from flask_login import login_user, logout_user, current_user, login_required
 
-from poorcms import app, db, bcrypt
+from poorcms import app, db
 from poorcms.models import StaticPage, User
 from poorcms.forms import StaticPageForm, RegistrationForm, LoginForm
 from poorcms.decorators import admin_required
@@ -81,9 +81,8 @@ def register():
         return redirect(url_for('index'))
     form = RegistrationForm()
     if form.validate_on_submit():
-        hashed_pw = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
         user = User(login=form.login.data, email=form.email.data,
-                    password=hashed_pw)
+                    password=form.password.data)
         db.session.add(user)
         db.session.commit()
         flash(f'Account created for {form.login.data}.', 'success')
@@ -98,8 +97,7 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(login=form.login.data).first()
-        if (user and bcrypt.check_password_hash(user.password,
-                form.password.data)):
+        if (user and user.verify_password(form.password.data)):
             login_user(user, remember=form.remember.data)
             next_page = request.args.get('next')
             if next_page:

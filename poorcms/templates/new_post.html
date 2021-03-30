@@ -1,0 +1,73 @@
+{% extends 'layout.html' %}
+
+{% block additional %}
+    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+    <script type="text/javascript">
+        tinymce.init({
+            selector: '#content'
+        });
+    </script>
+{% endblock additional %}
+
+{% block content %}
+    <section class="section">
+        <h1 class="title has-text-centered">{{ legend }}</h1>
+        <form method="POST" action="">
+            {{ form.csrf_token }}
+            <div class="field">
+                {{ form.title.label(class='label') }}
+                <div class="control">
+                    {% if form.title.errors %}
+                        {{ form.title(class='is-invalid input')}}
+                        {% for error in form.title.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    {% else %}
+                        {{ form.title(class='input') }}
+                    {% endif %}
+                </div>
+            </div>
+            <div class="field">
+                {{ form.content.label(class='label') }}
+                <div class="control">
+                    {% if form.content.errors %}
+                        {{ form.content(class='is-invalid textarea')}}
+                        {% for error in form.content.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    {% else %}
+                        {{ form.content(class='textarea', rows=16) }}
+                    {% endif %}
+                </div>
+            </div>
+            <div class="field is-grouped">
+                <div class="control">
+                    <label for="Published" class="checkbox">
+                        Opublikowany
+                        {{ form.published(class='checkbox') }}
+                    </label>
+                </div>
+            </div>
+            <div class="field is-grouped">
+                <div class="control">
+                    {% if edit_post %}
+                        {{ form.submit(class='button is-link', value='Edytuj') }}
+                    {% else %}
+                        {{ form.submit(class='button is-link', value='Utwórz') }}
+                    {% endif %}
+                </div>
+            </div>
+        </form>
+        {% if edit_post %}
+            <form action="{{ url_for('delete_post',
+                            post_slug=post.slug) }}" method="POST">
+                <div class="field mt-1">
+                    <div class="control">
+                        <input type="submit" class="button is-link is-danger" 
+                            value="Usuń">
+                    </div>
+                </div>
+            </form>
+        {% endif %}
+    </section>
+{% endblock content %}

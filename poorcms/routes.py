@@ -2,8 +2,8 @@ from flask import render_template, url_for, flash, redirect, request
 from flask_login import login_user, logout_user, current_user, login_required
 
 from poorcms import app, db
-from poorcms.models import StaticPage, User
-from poorcms.forms import StaticPageForm, RegistrationForm, LoginForm
+from poorcms.models import StaticPage, User, Post
+from poorcms.forms import StaticPageForm, RegistrationForm, LoginForm, PostForm
 from poorcms.decorators import admin_required
 
 
@@ -50,6 +50,7 @@ def edit_static_page(page_id):
         page.meta_title = form.meta_title.data
         page.meta_description = form.meta_description.data
         page.meta_noindex = form.meta_noindex.data
+        db.session.add(page)
         db.session.commit()
         flash('Page updated successfuly.', 'success')
         return redirect(url_for('index'))
@@ -113,6 +114,70 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('index'))
+
+
+@app.route('/posts')
+def posts():
+    posts = Post.query.filter_by(published=True).order_by(Post.created_at.desc())
+    return render_template('posts.html', posts=posts)
+
+
+@app.route('/post/<string:post_slug>')
+def post(post_slug):
+    post = Post.query.filter_by(slug=post_slug).first_or_404()
+    return render_template('post.html', post=post)
+
+
+@app.route('/post/new', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def new_post():
+    form = PostForm()
+    if form.validate_on_submit():
+        post = Post(
+            title=form.title.data,
+            content=form.content.data,
+            published=form.published.data,
+            author=current_user._get_current_object()
+        )
+        db.session.add(post)
+        db.session.commit()
+        flash('Post created.', 'success')
+        return redirect(url_for('posts'))
+    return render_template('new_post.html', form=form, legend='New post')
+
+
+@app.route('/post/<string:post_slug>/edit', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def edit_post(post_slug):
+    post = Post.query.filter_by(slug=post_slug).first_or_404()
+    form = PostForm()
+    if form.validate_on_submit():
+        post.title = form.title.data
+        post.content = form.content.data
+        post.published = form.published.data
+        db.session.add(post)
+        db.session.commit()
+        flash('Post updated successfuly.', 'success')
+        return redirect(url_for('post', post_slug=post.slug))
+    elif request.method == 'GET':
+        form.title.data = post.title
+        form.content.data = post.content
+        form.published.data = post.published
+    return render_template('new_post.html', form=form, post=post,
+                            legend='Edit post', edit_post=True)
+
+
+@app.route('/post/<string:post_slug>/delete', methods=['POST'])
+@login_required
+@admin_required
+def delete_post(post_slug):
+    post = Post.query.filter_by(slug=post_slug).first_or_404()
+    db.session.delete(post)
+    db.session.commit()
+    flash('Post deleted successfuly.', 'danger')
+    return redirect(url_for('posts'))
 
 
 @app.errorhandler(404)

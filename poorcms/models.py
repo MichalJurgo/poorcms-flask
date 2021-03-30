@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from flask_login import UserMixin
 
 from poorcms import bcrypt, db, login_manager
@@ -28,6 +30,7 @@ class User(db.Model, UserMixin):
     password_hash = db.Column(db.String(60), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=True)
     role = db.Column(db.String(32), default='user')
+    posts = db.relationship('Post', backref='author', lazy='dynamic')
 
     @property
     def password(self):
@@ -42,3 +45,22 @@ class User(db.Model, UserMixin):
 
     def __repr__(self):
         return self.login
+
+
+def slug_from_title(context):
+    title = context.get_current_parameters()['title'] 
+    slug_from_title = '-'.join(title.replace('-', ' ').lower()[:64].split())
+    return slug_from_title
+
+
+class Post(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(128), nullable=False)
+    content = db.Column(db.Text, nullable=True)
+    author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    published = db.Column(db.Boolean, nullable=False, default=True)
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
+    slug = db.Column(db.String(64), default=slug_from_title)
+
+    def __repr__(self):
+        return f'<Post: {self.title}>'

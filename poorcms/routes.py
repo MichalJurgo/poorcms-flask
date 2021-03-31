@@ -189,3 +189,8 @@ def page_not_found(e):
 def inject_menu_pages():
     menu_pages = StaticPage.query.filter_by(in_menu=True).all()
     return dict(menu_pages=menu_pages)
+
+@app.context_processor
+def inject_recent_posts():
+    recent_posts = Post.query.filter_by(published=True).order_by(Post.created_at.desc()).limit(5)
+    return dict(recent_posts=recent_posts)

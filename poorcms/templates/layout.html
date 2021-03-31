@@ -27,7 +27,15 @@
                 {% endfor %}
             {% endif %}
         {% endwith %}
-        {% block content %}{% endblock content %}
+        <div class="columns">
+            <div class="column is-one-fifth">
+                {% include '_recent_posts.html' %}
+            </div>
+            <div class="column is-three-fifths">
+                {% block content %}{% endblock content %}
+            </div>
+            <div class="column is-one-fifth"></div>
+        </div>
     </div>
 </body>
 </html>

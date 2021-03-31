@@ -1,0 +1,6 @@
+<h3 class="subtitle">Ostatnie posty</h3>
+{% for post in recent_posts %}
+    <header class="card-header">
+        <a class="card-header-title" href="{{ url_for('post', post_slug=post.slug) }}">{{ post.title }}</a>
+    </header>
+{% endfor %}
